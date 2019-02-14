@@ -31,12 +31,13 @@ public class IfInListHelpers {
     public CharSequence ifInList(final Object val1, final Options options) throws IOException {
 
         Boolean matches = false;
-        String subject = ((String) val1).trim();
+        String subject = String.valueOf(val1).trim();
 
-        List<String> allowedValues = parseAllowedValues(options);
+        List allowedValues = parseAllowedValues(options);
 
-        for (String allowedValue : allowedValues) {
-            if (subject.equals(allowedValue.trim())) {
+        for (Object allowedValue : allowedValues) {
+            String allowedValuesAsString = String.valueOf(allowedValue);
+            if (subject.equals(allowedValuesAsString.trim())) {
                 matches = true;
                 break;
             }

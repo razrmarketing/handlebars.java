@@ -26,6 +26,7 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.razr.handlebars.helpers.*;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ErrorHandler;
@@ -159,6 +160,7 @@ public class HbsServer {
     loader.setPrefix(new File(args.dir, args.prefix).getAbsolutePath());
     loader.setSuffix(args.suffix);
     Handlebars handlebars = new Handlebars(loader);
+      handlebars.handlebarsJsFile("/handlebars-v2.0.0.js");
 
     /**
      * Helper wont work in the stand-alone version, so we add a default helper
@@ -172,12 +174,25 @@ public class HbsServer {
         return new Handlebars.SafeString(options.fn.text());
       }
     });
-    handlebars.registerHelper("json", Jackson2Helper.INSTANCE);
-    handlebars.registerHelper("md", new MarkdownHelper());
+    //handlebars.registerHelper("json", Jackson2Helper.INSTANCE);
+    //handlebars.registerHelper("md", new MarkdownHelper());
+      DateHelpers.register(handlebars);
+      PhoneHelpers.register(handlebars);
+      SortHelpers.register(handlebars);
+      handlebars.registerHelpers(new MathHelper());
     // String helpers
-    StringHelpers.register(handlebars);
+      StringHelpers.register(handlebars);
+      HtmlHelpers.register(handlebars);
+      handlebars.registerHelpers(new IfEqualsHelpers());
+      handlebars.registerHelpers(new IfInListHelpers());
+    try {
+        handlebars.registerHelpers("everyNth.js", HbsServer.class.getClassLoader().getResourceAsStream("jshelpers/everyNth.js"));
+    } catch (Exception e) {
+        logger.error("Could not load javascript handlebars helper files: "+e);
+    }
+
     // Humanize helpers
-    HumanizeHelper.register(handlebars);
+    //HumanizeHelper.register(handlebars);
 
     final Server server = new Server(args.port);
     Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
