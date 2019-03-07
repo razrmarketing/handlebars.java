@@ -17,42 +17,25 @@
  */
 package com.github.jknack.handlebars.server;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Writer;
-import java.net.MalformedURLException;
-import java.util.Properties;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.github.jknack.handlebars.*;
+import com.github.jknack.handlebars.helper.*;
+import com.github.jknack.handlebars.io.*;
 import com.razr.handlebars.helpers.*;
-import org.apache.commons.io.IOUtils;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.ErrorHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.util.component.AbstractLifeCycle.AbstractLifeCycleListener;
-import org.eclipse.jetty.util.component.LifeCycle;
-import org.eclipse.jetty.util.resource.Resource;
-import org.eclipse.jetty.webapp.Configuration;
-import org.eclipse.jetty.webapp.WebAppContext;
-import org.eclipse.jetty.webapp.WebXmlConfiguration;
-import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.CmdLineParser;
-import org.kohsuke.args4j.Option;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.io.*;
+import org.eclipse.jetty.server.*;
+import org.eclipse.jetty.server.handler.*;
+import org.eclipse.jetty.servlet.*;
+import org.eclipse.jetty.util.component.AbstractLifeCycle.*;
+import org.eclipse.jetty.util.component.*;
+import org.eclipse.jetty.util.resource.*;
+import org.eclipse.jetty.webapp.*;
+import org.kohsuke.args4j.*;
+import org.slf4j.*;
 
-import com.github.jknack.handlebars.Handlebars;
-import com.github.jknack.handlebars.Helper;
-import com.github.jknack.handlebars.HelperRegistry;
-import com.github.jknack.handlebars.HumanizeHelper;
-import com.github.jknack.handlebars.Jackson2Helper;
-import com.github.jknack.handlebars.MarkdownHelper;
-import com.github.jknack.handlebars.helper.StringHelpers;
-import com.github.jknack.handlebars.io.FileTemplateLoader;
-import com.github.jknack.handlebars.io.TemplateLoader;
-import com.github.jknack.handlebars.io.URLTemplateLoader;
+import javax.servlet.http.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
 /**
  * A handlebars web server.
@@ -179,8 +162,13 @@ public class HbsServer {
       DateHelpers.register(handlebars);
       PhoneHelpers.register(handlebars);
       SortHelpers.register(handlebars);
-      handlebars.registerHelpers(new MathHelper());
-    // String helpers
+
+      handlebars.registerHelper("math", new MathHelper());
+
+      // Array Helpers
+      ArrayHelpers.register(handlebars);
+
+      // String helpers
       StringHelpers.register(handlebars);
       HtmlHelpers.register(handlebars);
       handlebars.registerHelpers(new IfEqualsHelpers());
